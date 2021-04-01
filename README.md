@@ -1,4 +1,4 @@
-# bt_app
+# lista_presenca_bluetooth
 
 A new Flutter project.
 

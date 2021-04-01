@@ -1,4 +1,4 @@
-name: bt_app
+name: lista_presenca_bluetooth
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -23,11 +23,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  get_it: ^6.0.0
+  intl: ^0.17.0
+  flutter_scan_bluetooth: ^1.1.0
+  autolist: ^0.1.1
+  percent_indicator: ^2.1.9+1
+  table_calendar: ^2.3.3
+  permission_handler: ^6.1.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
