@@ -1,19 +1,15 @@
 class BluetoothDeviceCustom {
   String name;
   String address;
-  bool paired;
-  bool nearby;
-  List<String> presencas = [];
+  List<String> presences = [];
 
-  BluetoothDeviceCustom(this.name, this.address, Set<bool> set,
-      {this.nearby = false, this.paired = false});
+  BluetoothDeviceCustom(this.name, this.address);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is BluetoothDeviceCustom &&
           runtimeType == other.runtimeType &&
-          name == other.name &&
           address == other.address;
 
   @override
@@ -25,6 +21,7 @@ class BluetoothDeviceCustom {
 
   @override
   String toString() {
-    return 'BluetoothDevice{name: $name, address: $address, paired: $paired, nearby: $nearby, presencas: $presencas}';
+    return 'BluetoothDevice{name: $name, address: $address, presences: $presences}';
   }
+
 }

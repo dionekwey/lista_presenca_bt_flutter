@@ -12,6 +12,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 class BuscarDispositivos extends StatefulWidget {
   final void Function(int) jumpToPage;
+
   const BuscarDispositivos({Key key, this.jumpToPage}) : super(key: key);
 
   @override
@@ -47,14 +48,15 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
     super.initState();
 
     _bluetooth.devices.listen((device) {
-      BluetoothDeviceCustom deviceTemp = BluetoothDeviceCustom(
-          device.name, device.address, {device.nearby, device.paired});
+      BluetoothDeviceCustom deviceTemp =
+          BluetoothDeviceCustom(device.name, device.address);
 
       //var disposito = deviceTemp.name + ' (${deviceTemp.address})';
       if (controller.dispositivosEncontrados.length == 0) {
         macsNovos.clear();
       }
 
+      // Atribui o nome do dispositivo salvo ao encontrado
       for (var i = 0; i < controller.dispositivosEncontrados.length; i++) {
         if (controller.dispositivosEncontrados[i].address ==
             deviceTemp.address) {
@@ -69,6 +71,13 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
               () {
                 novoDispositivo = false;
                 controller.addEncontrados(controller.dispositivosSalvos[i]);
+
+                if (!controller.mapPresencas[controller.selectedDayData]
+                    .contains(controller.dispositivosSalvos[i])) {
+                  controller.enviarDispositivo(i);
+                  debugPrint('ITEM ENVIADO: ' +
+                      controller.dispositivosSalvos[i].toString());
+                }
               },
             );
             debugPrint('Dispositivo ANTIGO: ' +
@@ -79,7 +88,7 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
           setState(
             () {
               controller.addEncontrados(deviceTemp);
-              controller.addSalvos(deviceTemp);
+              //controller.addSalvos(deviceTemp);
               macsNovos.add(deviceTemp.address);
             },
           );
@@ -145,34 +154,8 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
                   children: [
                     ListTile(
                       minVerticalPadding: 0,
-                      contentPadding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      contentPadding: EdgeInsets.fromLTRB(20, 0, 8, 0),
                       horizontalTitleGap: 7,
-                      leading: Container(
-                        color: Colors.transparent,
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        child: ClipOval(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: IconButton(
-                              icon: Icon(Icons.playlist_add),
-                              iconSize: 30,
-                              padding: EdgeInsets.all(13),
-                              color: controller.dispositivosEncontradosAnimated
-                                          .indexOf(item) !=
-                                      -1
-                                  ? Colors.green[900]
-                                  : Colors.black,
-                              splashColor: !clicou
-                                  ? Colors.black.withOpacity(0.1)
-                                  : Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              hoverColor: Colors.transparent,
-                              disabledColor: Colors.grey,
-                              onPressed: _buildPressed(item),
-                            ),
-                          ),
-                        ),
-                      ),
                       title: Text(
                         item.name,
                         overflow: TextOverflow.fade,
@@ -268,9 +251,7 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
                                         const Duration(milliseconds: 200),
                                       );
                                       setState(() {
-                                        controller.selecionarDispositivo(
-                                            controller.dispositivosSalvos
-                                                .indexOf(item));
+                                        controller.addSalvos(item);
                                         clicou = false;
                                       });
                                       widget.jumpToPage(2);
@@ -393,37 +374,6 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
         ),
       ],
     );
-  }
-
-  _buildPressed(item) {
-    if (controller.mapPresencas[controller.selectedDayData] == null) {
-      return null;
-    } else if (controller.mapPresencas[controller.selectedDayData]
-        .contains(item)) {
-      return null;
-    }
-    return () async {
-      if (controller.mapPresencas[controller.selectedDayData].contains(item)) {
-        setState(() {
-          clicou = true;
-        });
-      } else {
-        if (!clicou) {
-          setState(() {
-            clicou = true;
-          });
-          await new Future.delayed(
-            const Duration(milliseconds: 200),
-          );
-          setState(() {
-            controller
-                .enviarDispositivo(controller.dispositivosSalvos.indexOf(item));
-            clicou = false;
-          });
-          debugPrint('ITEM ENVIADO: ' + item.toString());
-        }
-      }
-    };
   }
 
   @override

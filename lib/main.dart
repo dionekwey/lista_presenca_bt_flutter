@@ -76,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     getIt<ListaDispositivos>().removeListener(update);
     pageController.dispose();
+    controller.encerrarApp();
 
     super.dispose();
   }

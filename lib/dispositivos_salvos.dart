@@ -125,14 +125,14 @@ class _DispositivosSalvosState extends State<DispositivosSalvos>
 
   Future<void> _displayTextAlert(
       BuildContext context, BluetoothDeviceCustom item) async {
-    bool vazio = item.presencas.isEmpty;
+    bool vazio = item.presences.isEmpty;
     debugPrint('VAZIO: ' + vazio.toString());
     List<String> presencasOrdenadasY = [];
     List<String> presencasOrdenadasD = [];
 
     if (!vazio) {
-      for (var i = 0; i < item.presencas.length; i++) {
-        DateTime inputDate = DateFormat('dd/MM/yyyy').parse(item.presencas[i]);
+      for (var i = 0; i < item.presences.length; i++) {
+        DateTime inputDate = DateFormat('dd/MM/yyyy').parse(item.presences[i]);
         String outputDate = DateFormat('yyyy/MM/dd').format(inputDate);
         presencasOrdenadasY.add(outputDate);
       }
@@ -341,6 +341,32 @@ class _DispositivosSalvosState extends State<DispositivosSalvos>
                           ListTile(
                             minVerticalPadding: 0,
                             contentPadding: EdgeInsets.fromLTRB(12, 0, 8, 0),
+                            leading: Container(
+                              color: Colors.transparent,
+                              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              child: ClipOval(
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: IconButton(
+                                    icon: Icon(Icons.playlist_add),
+                                    iconSize: 30,
+                                    padding: EdgeInsets.all(13),
+                                    color: controller.dispositivosEncontradosAnimated
+                                                .indexOf(item) !=
+                                            -1
+                                        ? Colors.green[900]
+                                        : Colors.black,
+                                    splashColor: !clicou
+                                        ? Colors.black.withOpacity(0.1)
+                                        : Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    disabledColor: Colors.grey,
+                                    onPressed: _buildPressed(item),
+                                  ),
+                                ),
+                              ),
+                            ),
                             title: Text(
                               item.name,
                               overflow: TextOverflow.fade,
@@ -496,6 +522,37 @@ class _DispositivosSalvosState extends State<DispositivosSalvos>
         ),
       ],
     );
+  }
+
+  _buildPressed(item) {
+    if (controller.mapPresencas[controller.selectedDayData] == null) {
+      return null;
+    } else if (controller.mapPresencas[controller.selectedDayData]
+        .contains(item)) {
+      return null;
+    }
+    return () async {
+      if (controller.mapPresencas[controller.selectedDayData].contains(item)) {
+        setState(() {
+          clicou = true;
+        });
+      } else {
+        if (!clicou) {
+          setState(() {
+            clicou = true;
+          });
+          await new Future.delayed(
+            const Duration(milliseconds: 200),
+          );
+          setState(() {
+            controller
+                .enviarDispositivo(controller.dispositivosSalvos.indexOf(item));
+            clicou = false;
+          });
+          debugPrint('ITEM ENVIADO: ' + item.toString());
+        }
+      }
+    };
   }
 
   @override
