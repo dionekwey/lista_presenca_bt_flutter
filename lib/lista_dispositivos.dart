@@ -137,8 +137,8 @@ class ListaDispositivosImplementation extends ListaDispositivos {
   @override
   void addEncontradosAnimated(bluetoothDeviceCustom) {
     _dispositivosEncontradosAnimated.add(bluetoothDeviceCustom);
-    notifyListeners();
     removeEncontradosAnimated(bluetoothDeviceCustom, true);
+    notifyListeners();
   }
 
   @override
@@ -289,14 +289,11 @@ class ListaDispositivosImplementation extends ListaDispositivos {
 
     initDatabase()
         .whenComplete(() => loadDevicesFromDB())
-        .whenComplete(() => loadPresencesFromDB());
-
-    await new Future.delayed(
-      const Duration(milliseconds: 3000),
-    );
-
-    _appInicializado = true;
-    notifyListeners();
+        .whenComplete(() => loadPresencesFromDB())
+        .whenComplete(() {
+      _appInicializado = true;
+      notifyListeners();
+    });
   }
 
   @override
@@ -314,16 +311,11 @@ class ListaDispositivosImplementation extends ListaDispositivos {
           "CREATE TABLE device (address TEXT, name TEXT, PRIMARY KEY(address))");
       await db.execute(
           "CREATE TABLE presence (event_date DATE, address TEXT, name TEXT, PRIMARY KEY(event_date, address))");
-
-      //await db.rawInsert("INSERT INTO device(address, name) VALUES(?,?)", ["18:01:D1:4A:EC:B1", "Fulano"]);
-      //await db.rawInsert( "INSERT INTO presence(event_date, address, name) VALUES(?,?)", [_selectedDayData, "18:01:D1:4A:EC:B1", "Fulano"]);
     }, version: 1);
   }
 
   Future<void> loadDevicesFromDB() async {
     List<Map<String, dynamic>> rows = await _database.query("device");
-
-    //addEncontrados(BluetoothDeviceCustom(0, "teste", "10:02:05:BG"));
 
     rows.forEach((row) => _dispositivosSalvos
         .add(BluetoothDeviceCustom(row["name"], row["address"])));

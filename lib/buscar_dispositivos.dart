@@ -279,70 +279,8 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
               primary: Colors.transparent,
               padding: EdgeInsets.all(0),
             ),
-            onPressed: () async {
-              if (!clicou) {
-                setState(() {
-                  clicou = true;
-                });
-                try {
-                  if (_scanning) {
-                    await _bluetooth.stopScan();
-                  } else {
-                    setState(() {
-                      controller.removeAllEncontrados();
-                    });
-                    await new Future.delayed(
-                      const Duration(milliseconds: 200),
-                    );
-                    await _bluetooth.startScan(pairedDevices: false);
-                    setState(() {
-                      _scanning = true;
-                      corBotao = Colors.red;
-                      iconeBotao = Icons.stop;
-                      _percentualAnimacaoBotaoBusca = 1.0;
-                    });
-                    debugPrint("\nbusca iniciada");
-                  }
-                } on PlatformException catch (e) {
-                  debugPrint(e.toString());
-                }
-                setState(() {
-                  clicou = false;
-                });
-              }
-            },
-            onLongPress: () async {
-              if (!clicou) {
-                setState(() {
-                  clicou = true;
-                });
-                try {
-                  if (_scanning) {
-                    await _bluetooth.stopScan();
-                  } else {
-                    setState(() {
-                      controller.removeAllEncontrados();
-                    });
-                    await new Future.delayed(
-                      const Duration(milliseconds: 200),
-                    );
-                    await _bluetooth.startScan(pairedDevices: false);
-                    setState(() {
-                      _scanning = true;
-                      corBotao = Colors.red;
-                      iconeBotao = Icons.stop;
-                      _percentualAnimacaoBotaoBusca = 1.0;
-                    });
-                    debugPrint("\nbusca iniciada");
-                  }
-                } on PlatformException catch (e) {
-                  debugPrint(e.toString());
-                }
-                setState(() {
-                  clicou = false;
-                });
-              }
-            },
+            onPressed: searchDevices,
+            onLongPress: searchDevices,
             child: AnimatedContainer(
               duration: Duration(milliseconds: 200),
               decoration: ShapeDecoration(
@@ -374,6 +312,39 @@ class _BuscarDispositivosState extends State<BuscarDispositivos>
         ),
       ],
     );
+  }
+
+  void searchDevices() async {
+    if (!clicou) {
+      setState(() {
+        clicou = true;
+      });
+      try {
+        if (_scanning) {
+          await _bluetooth.stopScan();
+        } else {
+          setState(() {
+            controller.removeAllEncontrados();
+          });
+          await new Future.delayed(
+            const Duration(milliseconds: 200),
+          );
+          await _bluetooth.startScan(pairedDevices: false);
+          setState(() {
+            _scanning = true;
+            corBotao = Colors.red;
+            iconeBotao = Icons.stop;
+            _percentualAnimacaoBotaoBusca = 1.0;
+          });
+          debugPrint("\nbusca iniciada");
+        }
+      } on PlatformException catch (e) {
+        debugPrint(e.toString());
+      }
+      setState(() {
+        clicou = false;
+      });
+    }
   }
 
   @override

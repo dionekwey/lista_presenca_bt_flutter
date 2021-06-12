@@ -24,7 +24,7 @@ class _ListaPresencaState extends State<ListaPresenca>
   final controller = GetIt.I.get<ListaDispositivos>();
   bool clicou = false;
   bool _dividerExpanded = true;
-  //bool _dispositivosExpanded = false;
+  bool _dispositivosExpanded = true;
   bool _calendarioExpanded = false;
   Color corBotao = Colors.white;
   int flexLista = 1;
@@ -54,19 +54,15 @@ class _ListaPresencaState extends State<ListaPresenca>
     });
   }
 
-  Future<void> _toogleDispositivosExpanded() async {
+  void _toogleDispositivosExpanded() {
     setState(() {
-      controller.toogleStatusApp();
+      _dispositivosExpanded = !_dispositivosExpanded;
+      if (flexLista == 1) {
+        flexLista = 0;
+      } else {
+        flexLista = 1;
+      }
     });
-    if (flexLista == 1) {
-      await new Future.delayed(
-        const Duration(milliseconds: 540),
-      );
-      flexLista = 0;
-    } else {
-      flexLista = 1;
-    }
-    setState(() {});
   }
 
   void _toogleCalendarioExpanded() {
@@ -233,7 +229,7 @@ class _ListaPresencaState extends State<ListaPresenca>
                         duration: Duration(milliseconds: 400),
                         color: corBotao,
                         child: ListTile(
-                          minVerticalPadding: 0,
+                          minVerticalPadding: 0, 
                           contentPadding: EdgeInsets.fromLTRB(8, 0, 8, 0),
                           horizontalTitleGap: 7,
                           leading: Stack(
@@ -345,7 +341,7 @@ class _ListaPresencaState extends State<ListaPresenca>
                                           setState(() {
                                             clicou = true;
                                           });
-                                          if (controller.appInicializado) {
+                                          if (_dispositivosExpanded) {
                                             debugPrint('LISTA PARA CALENDÁRIO');
                                             _toogleDispositivosExpanded();
                                             _toogleDividerExpanded();
@@ -397,17 +393,6 @@ class _ListaPresencaState extends State<ListaPresenca>
                       ),
                     ),
                     Flexible(
-                      flex: flexLista,
-                      child: ExpandedSection(
-                        expand: controller.appInicializado,
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          child: _buildListaPresenca(),
-                        ),
-                      ),
-                    ),
-                    Flexible(
                       flex: flexCalendario,
                       child: SingleChildScrollView(
                         child: Container(
@@ -426,7 +411,7 @@ class _ListaPresencaState extends State<ListaPresenca>
                                     startingDayOfWeek: StartingDayOfWeek.sunday,
                                     calendarStyle: CalendarStyle(
                                       contentPadding:
-                                          EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      EdgeInsets.fromLTRB(0, 0, 0, 0),
                                       cellMargin: EdgeInsets.all(3),
                                       selectedColor: Colors.green[900],
                                       todayColor: Colors.green[100],
@@ -451,7 +436,7 @@ class _ListaPresencaState extends State<ListaPresenca>
                                       centerHeaderTitle: true,
                                     ),
                                     availableGestures:
-                                        AvailableGestures.horizontalSwipe,
+                                    AvailableGestures.horizontalSwipe,
                                     onDaySelected: _onDaySelected,
                                     daysOfWeekStyle: DaysOfWeekStyle(
                                       decoration: BoxDecoration(
@@ -486,6 +471,17 @@ class _ListaPresencaState extends State<ListaPresenca>
                               ),
                             ],
                           ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: flexLista,
+                      child: ExpandedSection(
+                        expand: _dispositivosExpanded,
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: _buildListaPresenca(),
                         ),
                       ),
                     ),
